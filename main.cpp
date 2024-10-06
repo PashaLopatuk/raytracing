@@ -1,53 +1,52 @@
-#include "src/vec/vec2.h"
-#include "src/vec/vec3.h"
-#include "src/vec/funcs.h"
-#include <cstdio>
 #include <iostream>
+
+#include "src/config/config.h"
+#include "src/models/scene.hpp"
+#include "src/window/window.hpp"
+#include "src/vec/vec3.h"
+
 
 
 using namespace std;
 
 
 int main() {
-    int width = 143;
-    int height = 40-2;
-    float aspect = (float)width / height;
-    float pixelAspect = 11.f / 24.0f;
 
-    char gradient[] = " .:!/r(l1Z4H9W8$@";
-    int gradientSize = sizeof(gradient) / sizeof(char);
+    const Camera camera(
+        vec3(-5, 0, 0),
+        vec3(0)
+    );
 
-    char* screen = new char[width * height + 1];
-    screen[width * height] = '\0';
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                vec2 uv = vec2(i, j) / vec2(width, height) * 2.f -1.f;
+    const WindowSettings config = {600, 600};
 
-                // uv.x = (float)i / width * 2.0f - 1.0f;
-                // uv.y = (float)j / height * 2.0f - 1.0f;
-                char pixel = ' ';
+    const Scene scene(camera, config);
 
-                vec3 ro = vec3(-5, 0, 0);
-                vec3 rd = norm(vec3(1, uv));
+    sf::RenderWindow* window = createWindow(config);
 
-                uv.x *= aspect * pixelAspect;
+    sf::Image image;
+    sf::Texture texture;
+    sf::Sprite sprite;
 
-                vec2 intersection = sphere(ro, rd, 1);
+    
+    while (window->isOpen()) {
+        sf::Event event;
+        image.create(config.width, config.height, sf::Color::Black);
 
-                int color = 0;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+        
+        
+        
+        texture.loadFromImage(image);
+        sprite.setTexture(texture);
 
-
-                if (intersection.x > 0) {
-                    color = 10;
-                    pixel = '@';
-                }
-
-                color = clamp(color, 0, gradientSize);
-
-                screen[i + j * width] = gradient[color];
-            }
+        window->clear();
+        window->draw(sprite);
+        window->display();
+        
         }
-        printf(screen);
+    }
 
     return 0;
 }

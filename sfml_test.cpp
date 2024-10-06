@@ -19,8 +19,6 @@ int main() {
     sf::RenderWindow* window = createWindow(config);
 
     sf::Image image;
-
-
     sf::Texture texture;
     sf::Sprite sprite;
 
